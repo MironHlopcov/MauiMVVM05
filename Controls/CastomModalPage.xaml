@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:model ="clr-namespace:MauiMVVM.Model"
+             xmlns:viewmodel ="clr-namespace:MauiMVVM.ViewModel"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiMVVM.Controls.CastomModalPage"
+             x:DataType="viewmodel:DataItemListViewModel"
+             x:Name="RootCastomModalPage"
+             xmlns:con="clr-namespace:MauiMVVM.Controls">
+    <Grid
+        x:Name="CastomModalPageGrid">
+    </Grid>
+</ContentPage>
