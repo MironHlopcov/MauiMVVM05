@@ -24,7 +24,8 @@ public partial class DataItemListPage : ContentPage
     private void Filter_Clicked(object sender, EventArgs e)
     {
 #if __MOBILE__
-        ShowModalFilterDialog();
+        //ShowModalFilterDialog();
+        ShowAndHidenFilterPanel();
         return;
 #endif
         ShowAndHidenFilterPanel();

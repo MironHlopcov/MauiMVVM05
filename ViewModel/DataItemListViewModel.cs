@@ -71,7 +71,17 @@ namespace MauiMVVM.ViewModel
 
         async void GetDataItemsDetailPage(object obj)
         {
-            await Navigation.PushAsync(new DataItemDetailPage((obj as DataItemViewModel)));
+            //await Navigation.PushAsync(new DataItemDetailPage((obj as DataItemViewModel)));
+            
+            //greate foolScrean modal page with back button 
+            var modalPage = new NavigationPage(new ContentPage());
+            var detalpage = new DataItemDetailPage((obj as DataItemViewModel));
+            detalpage.NavigatingFrom += (o, s) => 
+            {
+                Navigation.PopModalAsync();
+            };
+            await Navigation.PushModalAsync(modalPage);
+            await modalPage.PushAsync(detalpage);
         }
 
         async Task GetDataItemAsync()

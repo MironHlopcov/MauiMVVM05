@@ -6,6 +6,9 @@
              x:Class="MauiMVVM.View.DataItemDetailPage"
              x:DataType="viewmodel:DataItemViewModel"
              Title="DataItemDetailPage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit"/>
+    </ContentPage.ToolbarItems>
     <VerticalStackLayout>
         <Label 
             Text="{Binding Name}"
@@ -13,3 +16,5 @@
             HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>
+
+<!--NavigationPage.HasNavigationBar="False"-->

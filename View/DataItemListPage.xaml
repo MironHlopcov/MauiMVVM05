@@ -22,7 +22,6 @@
             RowDefinitions="Auto,*,Auto"
             ColumnSpacing="5"
             RowSpacing="1">
-
             <RefreshView 
                 IsRefreshing="{Binding IsRefreshing}"
                 Command="{Binding GetDataItemsComand}"

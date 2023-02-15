@@ -9,7 +9,7 @@ public partial class DataItemDetailPage : ContentPage
     public DataItemDetailPage(DataItemViewModel vm)
 	{
 		InitializeComponent();
-		ViewModel = vm;
+        ViewModel = vm;
 		BindingContext = ViewModel;
 	}
 }
