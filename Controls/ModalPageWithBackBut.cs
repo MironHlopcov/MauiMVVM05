@@ -10,7 +10,6 @@ namespace MauiMVVM.Controls
     {
         ModalPageWithBackBut(ContentPage page)
         {
-            ModalPageWithBackBut
             PushAsync(page);
         }
     }

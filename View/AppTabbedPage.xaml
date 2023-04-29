@@ -6,6 +6,6 @@
              xmlns:viewmodel ="clr-namespace:MauiMVVM.ViewModel"
              x:Class="MauiMVVM.View.AppTabbedPage"
              xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
-             android:TabbedPage.ToolbarPlacement="Bottom"
+             android:TabbedPage.ToolbarPlacement="Top"
              Title="AppTabbedPage">
 </TabbedPage>

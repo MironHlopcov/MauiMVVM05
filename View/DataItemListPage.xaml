@@ -27,7 +27,8 @@
                 Command="{Binding GetDataItemsComand}"
                 Grid.Row="1"
                 Grid.ColumnSpan="2">
-                    <CollectionView ItemsSource="{Binding DataItems}"
+                    <CollectionView 
+                            x:Name="CollectionView"
                             SelectedItems="{Binding SelectedDataItem}"
                             SelectionMode="None"
                             EmptyView="{OnIdiom Phone='Swaip dawn to update', Default='No items'}">
@@ -43,19 +44,28 @@
                                                 x:Type viewmodel:DataItemListViewModel}}, 
                                                 Path=GetDataItemsDetailPageComand}">
                                         </TapGestureRecognizer>
-                                    </Frame.GestureRecognizers>
-                                    <Grid ColumnDefinitions="125, *"
-                                          RowDefinitions="125">
-                                        <Image Source="{Binding Image}"/>
+                                  
+                                </Frame.GestureRecognizers>
+                                    <Grid ColumnDefinitions="Auto, *"
+                                          RowDefinitions="Auto, *">
+                                        <Image Source="{Binding Image}"
+                                               HeightRequest="125"
+                                               WidthRequest="125"
+                                               Grid.Column="0"
+                                               Grid.RowSpan="2"/>
                                         <Label Text="{Binding Name}"
-                                           Grid.Column="1"/>
-                                    </Grid>
+                                               Grid.Column="1"/>
+                                        <Label Text="{Binding DateTime}"
+                                               Grid.Column="1"
+                                               Grid.Row="2"/>
+                                </Grid>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                 </CollectionView>
             </RefreshView>
-            <Button Text="Get Datas"
+            <Button x:Name="RefreshButton"
+                    Text="{Binding RefreshButtonText}"
                     IsVisible="{x:OnIdiom Phone=false, Default=true}"
                     Command="{Binding GetDataItemsComand}"
                     IsEnabled="{Binding IsNotBusy}"
@@ -80,6 +90,8 @@
 </ContentPage>
 
 
+<!--  <CollectionView ItemsSource="{Binding DataItems1}" -->
+    
 <!--<SearchBar Text="{Binding SearchText}" SearchCommand="{Binding SearchDataItemsComand}"
                    Grid.ColumnSpan="2"/>-->
 

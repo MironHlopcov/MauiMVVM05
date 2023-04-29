@@ -16,7 +16,7 @@ namespace MauiMVVM.Service
         {
             if(dataItemsList.Count>0)
                 return dataItemsList;
-            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/MonkeysApp/monkeydata.json");
+            var response = await httpClient.GetAsync("https://raw.githubusercontent.com/MironHlopcov/Manky/main/List");
             if (response.IsSuccessStatusCode)
             {
                 dataItemsList = await response.Content.ReadFromJsonAsync<List<DataItem>>();

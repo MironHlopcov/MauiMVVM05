@@ -8,8 +8,9 @@ public partial class App : Application
 	{
 		InitializeComponent();
 		//MainPage = new NavigationPage( new DataItemListPage());
-		MainPage = new AppTabbedPage();
-		//MainPage = new AppFlyoutPage();
+		MainPage = new AppTabbedPage();//oneflauout
+		//MainPage = new AppFlyoutPage();//witoutFlaout
 
     }
 }
+

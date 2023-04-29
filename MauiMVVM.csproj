@@ -53,6 +53,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\close_ic.svg" />
+	  <None Remove="Resources\Images\empty_icon.svg" />
 	  <None Remove="Resources\Images\expand_less.svg" />
 	  <None Remove="Resources\Images\expand_more.svg" />
 	  <None Remove="Resources\Images\filter_list.svg" />

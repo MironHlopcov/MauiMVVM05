@@ -7,16 +7,30 @@
       x:DataType="viewmodel:DataItemListViewModel"
       x:Name="RootGrid"
       BackgroundColor="DarkGray"
-      RowDefinitions="Auto,*,Auto"
+      RowDefinitions="Auto,Auto,*,Auto"
       ColumnDefinitions="*">
     <SearchBar
         Grid.Row="0"
         x:Name="SearchBar" 
         Text="{Binding SearchText}" 
         SearchCommand="{Binding SearchDataItemsComand}"/>
+    <FlexLayout
+        Direction="Row"
+        Wrap="Wrap"
+        AlignItems="Start"
+        JustifyContent ="SpaceBetween"
+        Grid.Row="1">
+        <con:MyDatePieker
+            x:Name="For"
+            DateValue="{Binding SearchDates, Mode=TwoWay}"/>
+        <con:MyDatePieker
+            x:Name="To"
+            DateValue="{Binding SearchDates2}"
+            MinDateValue="{Binding DateValue, Source={x:Reference For}}"/>
+    </FlexLayout>
     <ListView 
         x:Name="ListOfExpandElement"
-        Grid.Row="1"
+        Grid.Row="2"
         ItemsSource="{Binding FiltredFilds}"
         SelectionMode="None"
         HasUnevenRows ="True">
@@ -32,7 +46,7 @@
     </ListView>
     <Grid
         ColumnDefinitions="*,*"
-        Grid.Row="2">
+        Grid.Row="3">
         <Button
             x:Name="SearchButton"
             Grid.Column="0"

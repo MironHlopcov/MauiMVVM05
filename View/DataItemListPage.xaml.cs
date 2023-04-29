@@ -8,15 +8,16 @@ namespace MauiMVVM;
 
 public partial class DataItemListPage : ContentPage
 {
-    public DataItemListPage()
+    public DataItemListPage(int index, DataItemListViewModel vm)
     {
-        DataItemService dataItemService = new DataItemService();
+       
         InitializeComponent();
-        BindingContext = new DataItemListViewModel()
-        {
-            Navigation = this.Navigation,
-            DataItemService = dataItemService
-        };
+        vm.Navigation = this.Navigation;
+        BindingContext = vm;
+        if (index == 1)
+            CollectionView.ItemsSource = vm.DataItems1;
+        if (index == 2)
+            CollectionView.ItemsSource = vm.DataItems2;
         FilterPanelElement.SetFilter.Clicked += Filter_Clicked;
         FilterPanelElement.ClearFilter.Clicked += Filter_Clicked;
     }
@@ -24,16 +25,15 @@ public partial class DataItemListPage : ContentPage
     private void Filter_Clicked(object sender, EventArgs e)
     {
 #if __MOBILE__
-        //ShowModalFilterDialog();
         ShowAndHidenFilterPanel();
         return;
 #endif
         ShowAndHidenFilterPanel();
+
     }
     private void ShowAndHidenFilterPanel()
     {
         FilterScrean.IsVisible = !FilterScrean.IsVisible;
-
         if (FilterScrean.IsVisible)
         {
             if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone)

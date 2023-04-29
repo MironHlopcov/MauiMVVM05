@@ -1,4 +1,6 @@
-﻿using MauiMVVM.Model;
+﻿using MauiMVVM.Controls;
+using MauiMVVM.Model;
+using Microsoft.Maui.Controls.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +21,38 @@ namespace MauiMVVM.ViewModel
         {
             this.DataItem = item;
         }
-      
+
+        public void SetChips()
+        {
+            Chips = new ObservableCollection<Chip>();
+            Chips.CollectionChanged += (s, o) =>
+            {
+
+            };
+            foreach (var st in DataItem.Name.ToCharArray())
+            {
+                var chip = new Chip()
+                {
+                    Text = $"{st}",
+                    StrokeShape = new RoundRectangle { CornerRadius = 5 },
+                    BackgroundColor = Color.FromArgb("#e1e1e1"),
+                    Stroke = Colors.DarkGrey,
+                    StrokeThickness = 0.5,
+                    Padding = 5,
+                };
+                chip.Checkd += (s, e) =>
+                {
+                    Name = DataItem.Name.Replace(chip.Text, null);
+                };
+                //chip.CloseButtonClicked += (s, e) => 
+                //{
+                //    Chips.Remove(chip);
+                //    OnPropertyChanged(nameof(Chip));
+                //};
+                Chips.Add(chip);
+            }
+        }
+
         private DataItemListViewModel dataItemListViewModel;
         public DataItemListViewModel DataItemListViewModel
         {
@@ -39,9 +72,21 @@ namespace MauiMVVM.ViewModel
             get => DataItem.Name;
             set
             {
-                if (DataItem.Name == value)
+                if (DataItem.Name != value)
+                {
+                    DataItem.Name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public DateTime DateTime
+        {
+            get => DataItem.DateTime;
+            set
+            {
+                if (DataItem.DateTime == value)
                     return;
-                DataItem.Name = value;
+                DataItem.DateTime = value;
                 OnPropertyChanged();
 
             }
@@ -55,8 +100,9 @@ namespace MauiMVVM.ViewModel
                     return;
                 DataItem.Image = value;
                 OnPropertyChanged();
-
             }
         }
+
+        public ObservableCollection<Chip> Chips { get; set; }
     }
 }

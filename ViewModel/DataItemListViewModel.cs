@@ -1,17 +1,20 @@
 ﻿using MauiMVVM.Controls;
+using MauiMVVM.Resources.Constants;
 using MauiMVVM.Service;
 using MauiMVVM.View;
 using System.Collections.ObjectModel;
-
+using System.Collections.Specialized;
 
 namespace MauiMVVM.ViewModel
 {
     public class DataItemListViewModel : BaseViewModel
     {
-       
+
         public DataItemService DataItemService { get; set; }
         private List<DataItemViewModel> dataItems { get; set; } = new();
-        public ObservableCollection<DataItemViewModel> DataItems { get; set; }
+
+        public ObservableCollection<DataItemViewModel> DataItems1 { get; set; }
+        public ObservableCollection<DataItemViewModel> DataItems2 { get; set; }
 
         public INavigation Navigation { get; set; }
         public Command GetDataItemsComand { get; }
@@ -27,23 +30,19 @@ namespace MauiMVVM.ViewModel
                     return;
                 isRefreshing = value;
                 OnPropertyChanged(); //если текст не меняется из кода применять нет смысла
-
             }
         }
-
-        string searchText;
-        public string SearchText
+        
+        private string refreshButtonText { get; set; }
+        public string RefreshButtonText
         {
-            get => searchText;
+            get => refreshButtonText;
             set
             {
-                if (searchText == value)
+                if (refreshButtonText == value)
                     return;
-                searchText = value;
-                if (string.IsNullOrWhiteSpace(searchText))
-                    SearchDataItems();
-                 OnPropertyChanged(); //если текст не меняется из кода применять нет смысла
-
+                refreshButtonText = value;
+                OnPropertyChanged(); //если текст не меняется из кода применять нет смысла
             }
         }
 
@@ -61,27 +60,32 @@ namespace MauiMVVM.ViewModel
 
         public DataItemListViewModel()
         {
-            DataItems = new ObservableCollection<DataItemViewModel>();
+            DataItems1 = new ObservableCollection<DataItemViewModel>();
+            DataItems2 = new ObservableCollection<DataItemViewModel>();
             GetDataItemsComand = new Command(async () => await GetDataItemAsync());
             SearchDataItemsComand = new Command(SearchDataItems);
             FilterDataItemsComand = new Command(GetFilterResult);
             CleanFilterDataItemsComand = new Command(CleanFilter);
             GetDataItemsDetailPageComand = new Command(GetDataItemsDetailPage);
+            RefreshButtonText = Constants.GetDatasButton;
         }
 
         async void GetDataItemsDetailPage(object obj)
         {
-            //await Navigation.PushAsync(new DataItemDetailPage((obj as DataItemViewModel)));
-            
-            //greate foolScrean modal page with back button 
-            var modalPage = new NavigationPage(new ContentPage());
-            var detalpage = new DataItemDetailPage((obj as DataItemViewModel));
-            detalpage.NavigatingFrom += (o, s) => 
+            var selectItemVm = obj as DataItemViewModel;
+            if (selectItemVm != null) 
             {
-                Navigation.PopModalAsync();
-            };
-            await Navigation.PushModalAsync(modalPage);
-            await modalPage.PushAsync(detalpage);
+                var modalPage = new NavigationPage(new ContentPage());
+                var detalpage = new DataItemDetailPage(selectItemVm);
+                detalpage.NavigatingFrom += (o, s) =>
+                {
+                    Navigation.PopModalAsync();
+                };
+                await Navigation.PushModalAsync(modalPage);
+                await modalPage.PushAsync(detalpage);
+
+                selectItemVm.SetChips();
+            }
         }
 
         async Task GetDataItemAsync()
@@ -113,21 +117,74 @@ namespace MauiMVVM.ViewModel
             }
             finally
             {
+                ClearDataItelsLists();
                 foreach (var data in dataItems)
                 {
-                    DataItems.Add(data);
-
+                    AddToDataItelsLists(data);
+                    RefreshButtonText = Constants.RefreshButton;
                 }
                 IsBusy = false;
                 IsRefreshing = false;
                 InitializeFilter();
-               
             }
         }
 
+        private void AddToDataItelsLists(DataItemViewModel data)
+        {
+               if(data.Name.StartsWith("M"))
+                   DataItems1.Add(data);
+               if(!data.Name.EndsWith("M"))
+                   DataItems2.Add(data);
+        }
+        private void ClearDataItelsLists()
+        {
+                DataItems1.Clear();
+                DataItems2.Clear();
+        }
 
+        string searchText;
+        public string SearchText
+        {
+            get => searchText;
+            set
+            {
+                if (searchText == value)
+                    return;
+                searchText = value;
+                if (string.IsNullOrWhiteSpace(searchText))
+                    SearchDataItems();
+                OnPropertyChanged(); //если текст не меняется из кода применять нет смысла
+            }
+        }
 
-        private List<GroupItem> filtredFilds=new();
+        DateTime searchDates;
+        public DateTime SearchDates
+        {
+            get => searchDates;
+            set
+            {
+                if (searchDates != value)
+                {
+                    searchDates = value;
+                    OnPropertyChanged();//если текст не меняется из кода применять нет смысла
+                }
+            }
+        }
+        DateTime searchDates2;
+        public DateTime SearchDates2
+        {
+            get => searchDates2;
+            set
+            {
+                if (searchDates2 != value)
+                {
+                    searchDates2 = value;
+                    OnPropertyChanged();//если текст не меняется из кода применять нет смысла
+                }
+            }
+        }
+
+        private List<GroupItem> filtredFilds = new();
         public List<GroupItem> FiltredFilds
         {
             get => filtredFilds;
@@ -166,30 +223,49 @@ namespace MauiMVVM.ViewModel
             {
                 result = result.Where(d => d.Name.ToLower().Contains(searchText)).ToList();
             }
+            if (SearchDates2 > new DateTime(1900, 1, 1))
+            {
+                if (SearchDates > new DateTime(1900, 1, 1))
+                {
+                    result = result.Where(d => d.DateTime.Date >= SearchDates.Date).ToList();
+                    result = result.Where(d => d.DateTime.Date <= SearchDates2.Date).ToList();
+                }
+                else
+                    result = result.Where(d => d.DateTime.Date == SearchDates2.Date).ToList();
+            }
+            else
+            {
+                if (SearchDates > new DateTime(1900, 1, 1))
+                {
+                    result = result.Where(d => d.DateTime.Date == SearchDates.Date).ToList();
+                }
+            }
+           
             foreach (var exoFilterItem in filtredFilds)
             {
                 if (exoFilterItem.Key == "Name")
                 {
-                    var selectedValues = exoFilterItem.Items.Where(x=>x.Value==true).Select(x=>x.Key).ToList();
-                    if(selectedValues.Count!=0)
-                    result = result.Where(d =>selectedValues.Contains(d.Name)).ToList();
+                    var selectedValues = exoFilterItem.Items.Where(x => x.Value == true).Select(x => x.Key).ToList();
+                    if (selectedValues.Count != 0)
+                        result = result.Where(d => selectedValues.Contains(d.Name)).ToList();
                 }
             }
-            DataItems.Clear();
-            result.ForEach(d => DataItems.Add(d));
+            ClearDataItelsLists();
+            result.ForEach(d => AddToDataItelsLists(d));
         }
         private void CleanFilter()
         {
-            if(DataItems.Count>0)
-                DataItems.Clear();
+            ClearDataItelsLists();
             SearchText = "";
-            filtredFilds.ForEach(x=>x.Value = false);
-            dataItems.ForEach(d => DataItems.Add(d));
+            filtredFilds.ForEach(x => x.Value = false);
+            SearchDates = DateTime.MinValue;
+            SearchDates2 = DateTime.MinValue;
+            dataItems.ForEach(d => AddToDataItelsLists(d));
         }
         void InitializeFilter()
         {
             var names = new List<Item>();
-            dataItems.GroupBy(x=>x.Name).Select(x=>x.First()).ToList()
+            dataItems.GroupBy(x => x.Name).Select(x => x.First()).ToList()
                 .ForEach(x => names.Add(new Item { Key = x.Name }));
 
             var names2 = new List<Item>();
@@ -197,7 +273,7 @@ namespace MauiMVVM.ViewModel
                 .ForEach(x => names2.Add(new Item { Key = x.Name }));
 
             var dFiltredFilds = new List<GroupItem>();
-            dFiltredFilds.Add( new() { Key= "Name", Items= names.ToArray() });
+            dFiltredFilds.Add(new() { Key = "Name", Items = names.ToArray() });
             FiltredFilds = dFiltredFilds;
         }
 

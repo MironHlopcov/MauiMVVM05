@@ -13,26 +13,10 @@ public partial class FilterPanel
     public Button SetFilter { get; set; }
     public Button ClearFilter { get; set; }
 
-
     public FilterPanel()
 	{
         InitializeComponent();
         SetFilter = SearchButton;
         ClearFilter = CleanButton;
     }
-    //private bool isHiden;
-    //public bool IsHiden
-    //{
-    //    get=> this.IsVisible;
-    //    set
-    //    {
-    //        this.IsVisible = value;
-    //    }
-    //}
-
-    //public void CleanButton_Clicked(object sender, EventArgs e)
-    //{
-    //    SearchBar.Text = null;
-       
-    //}
 }

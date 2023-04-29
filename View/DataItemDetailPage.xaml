@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:model ="clr-namespace:MauiMVVM.Model"
              xmlns:viewmodel ="clr-namespace:MauiMVVM.ViewModel"
+             xmlns:con="clr-namespace:MauiMVVM.Controls"
              x:Class="MauiMVVM.View.DataItemDetailPage"
              x:DataType="viewmodel:DataItemViewModel"
              Title="DataItemDetailPage">
@@ -14,6 +15,9 @@
             Text="{Binding Name}"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        <con:ChipConteiner
+             ChipList="{Binding Chips}">
+        </con:ChipConteiner>
     </VerticalStackLayout>
 </ContentPage>
 
