@@ -67,6 +67,20 @@ namespace MauiMVVM.ViewModel
             }
         }
 
+      
+        public bool IsSelected
+        {
+            get => DataItem.IsSelected;
+            set
+            {
+                if (DataItem.IsSelected != value)
+                {
+                    DataItem.IsSelected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public string Name
         {
             get => DataItem.Name;

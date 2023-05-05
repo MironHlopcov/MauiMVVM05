@@ -21,9 +21,11 @@
         JustifyContent ="SpaceBetween"
         Grid.Row="1">
         <con:MyDatePieker
+            BackgroundColor="Transparent"
             x:Name="For"
             DateValue="{Binding SearchDates, Mode=TwoWay}"/>
         <con:MyDatePieker
+            BackgroundColor="Transparent"
             x:Name="To"
             DateValue="{Binding SearchDates2}"
             MinDateValue="{Binding DateValue, Source={x:Reference For}}"/>

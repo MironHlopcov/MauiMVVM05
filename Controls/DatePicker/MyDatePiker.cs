@@ -19,10 +19,14 @@ namespace MauiMVVM.Controls
         MyEmpryDataPiker emptyDataPiker;
         public MyDatePieker()
         {
+           
             emptyDataPiker = new MyEmpryDataPiker(this);
             emptyDataPiker.Format = "dd/mm/yyyy";
             emptyDataPiker.MaximumDate = DateTime.Now;
-
+            emptyDataPiker.BackgroundColor = Colors.Transparent;
+            emptyDataPiker.Background = Colors.Transparent;
+            emptyDataPiker.Margin = 2;
+          
             pikerImage = new ImageButton()
                 .Source("calendar.png")
                 .Size(0, 0);
@@ -52,6 +56,7 @@ namespace MauiMVVM.Controls
 
             Content = new HorizontalStackLayout
             {
+                Margin=2,
                 Children =
                 {
                     pikerImage,

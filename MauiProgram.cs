@@ -2,7 +2,6 @@
 using MauiMVVM.View;
 using MauiMVVM.ViewModel;
 using CommunityToolkit.Maui;
-using CommunityToolkit.Maui;
 using MauiMVVM.Controls;
 
 namespace MauiMVVM;
@@ -24,6 +23,7 @@ public static class MauiProgram
         //builder.Services.AddSingleton<DataItemService>();
 
         MyCastomControlHandler myHandlr = new();
+        CastomControlLongClickHandler castomControlLongClickHandler = new();
         return builder.Build();
     }
 }

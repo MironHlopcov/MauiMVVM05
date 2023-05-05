@@ -6,11 +6,20 @@
              x:Class="MauiMVVM.DataItemListPage"
              x:DataType="viewmodel:DataItemListViewModel"
              x:Name="RootConntentPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:con="clr-namespace:MauiMVVM.Controls"
+             xmlns:converters="clr-namespace:MauiMVVM.Controls.Converters"
              Title="Title">
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="filter_list.png" Text="Filter" Clicked="Filter_Clicked"/>
     </ContentPage.ToolbarItems>
+
+    <!--<ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToObjectConverter x:Key="boolToColor"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>-->
 
     <Grid 
         ColumnDefinitions="{OnIdiom Phone='*', Default='.75*,.25*'}"
@@ -27,41 +36,55 @@
                 Command="{Binding GetDataItemsComand}"
                 Grid.Row="1"
                 Grid.ColumnSpan="2">
-                    <CollectionView 
+                <CollectionView 
                             x:Name="CollectionView"
-                            SelectedItems="{Binding SelectedDataItem}"
-                            SelectionMode="None"
+                            SelectionMode= "None"
                             EmptyView="{OnIdiom Phone='Swaip dawn to update', Default='No items'}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="model:DataItem">
-                                <Frame BackgroundColor="Gray">
-                                    <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                                NumberOfTapsRequired="1"
-                                                CommandParameter="{Binding .}"
-                                                Command="{Binding 
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:DataItem">
+                            <con:LongPressedItem BackgroundColor="Gray"
+                                    StrokeThickness="2"
+                                    StrokeShape="RoundRectangle 5,5,5,5"
+                                                ClickParameter="{Binding .}"
+                                                Select="{Binding 
+                                                Source={RelativeSource AncestorType={
+                                                x:Type viewmodel:DataItemListViewModel}}, 
+                                                Path=SelectItemsComand}"
+                                                Click="{Binding 
                                                 Source={RelativeSource AncestorType={
                                                 x:Type viewmodel:DataItemListViewModel}}, 
                                                 Path=GetDataItemsDetailPageComand}">
-                                        </TapGestureRecognizer>
-                                  
-                                </Frame.GestureRecognizers>
-                                    <Grid ColumnDefinitions="Auto, *"
+                               
+                                <con:LongPressedItem.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <MultiTrigger TargetType="Border">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsSelected}" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="BackgroundColor" Value="LightSkyBlue" />
+                                                <Setter Property="StrokeThickness" Value="10"/>
+                                            </MultiTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </con:LongPressedItem.Style>
+
+                                <Grid ColumnDefinitions="Auto, *"
                                           RowDefinitions="Auto, *">
-                                        <Image Source="{Binding Image}"
+                                    <ImageButton Source="{Binding Image}"
                                                HeightRequest="125"
                                                WidthRequest="125"
                                                Grid.Column="0"
                                                Grid.RowSpan="2"/>
-                                        <Label Text="{Binding Name}"
+                                    <Label Text="{Binding Name}"
                                                Grid.Column="1"/>
-                                        <Label Text="{Binding DateTime}"
+                                    <Label Text="{Binding DateTime}"
                                                Grid.Column="1"
                                                Grid.Row="2"/>
                                 </Grid>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
+                            </con:LongPressedItem>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
                 </CollectionView>
             </RefreshView>
             <Button x:Name="RefreshButton"
@@ -91,8 +114,45 @@
 
 
 <!--  <CollectionView ItemsSource="{Binding DataItems1}" -->
-    
+
 <!--<SearchBar Text="{Binding SearchText}" SearchCommand="{Binding SearchDataItemsComand}"
                    Grid.ColumnSpan="2"/>-->
 
-<!--<ActivityIndicator IsVisible="{OnIdiom Phone='False', Default={Binding IsBusy}}"--> 
+<!--<ActivityIndicator IsVisible="{OnIdiom Phone='False', Default={Binding IsBusy}}"-->
+
+
+
+
+
+
+<!--<Border.GestureRecognizers>
+    <TapGestureRecognizer
+                                                NumberOfTapsRequired="1"
+                                                CommandParameter="{Binding .}"
+                                                Command="{Binding 
+                                                Source={RelativeSource AncestorType={
+                                                x:Type viewmodel:DataItemListViewModel}}, 
+                                                Path=GetDataItemsDetailPageComand}">
+    </TapGestureRecognizer>
+</Border.GestureRecognizers>-->
+
+
+
+<!--<CollectionView 
+                            x:Name="CollectionView"
+                            SelectedItem="{Binding SelectedDataItem}"
+                            SelectedItems="{Binding SelectedDataItems, Mode=TwoWay}"
+                            SelectionMode= "None"
+                            SelectionChanged="CollectionView_SelectionChanged"
+                            EmptyView="{OnIdiom Phone='Swaip dawn to update', Default='No items'}">-->
+
+<!--<VisualStateManager.VisualStateGroups>
+    <VisualStateGroup Name="CommonStates">
+        <VisualState Name="Normal"></VisualState>
+        <VisualState Name="Selected">
+            <VisualState.Setters>
+                <Setter Property="BackgroundColor" Value="LightSkyBlue"></Setter>
+            </VisualState.Setters>
+        </VisualState>
+    </VisualStateGroup>
+</VisualStateManager.VisualStateGroups>-->

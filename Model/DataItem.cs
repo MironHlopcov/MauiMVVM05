@@ -8,6 +8,8 @@ namespace MauiMVVM.Model
 {
     public class DataItem
     {
+        public bool IsSelected { get; set; } = false;
+
         public string Name { get; set; }
         public string Location { get; set; }
         public string Details { get; set; }

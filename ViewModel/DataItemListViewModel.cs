@@ -1,4 +1,5 @@
 ﻿using MauiMVVM.Controls;
+using MauiMVVM.Model;
 using MauiMVVM.Resources.Constants;
 using MauiMVVM.Service;
 using MauiMVVM.View;
@@ -10,15 +11,40 @@ namespace MauiMVVM.ViewModel
     public class DataItemListViewModel : BaseViewModel
     {
 
+        public event EventHandler SelectionStateChenged;
+        protected virtual void OnSelectionStateChenged(EventArgs e) => SelectionStateChenged?.Invoke(this, e);
+
         public DataItemService DataItemService { get; set; }
         private List<DataItemViewModel> dataItems { get; set; } = new();
 
         public ObservableCollection<DataItemViewModel> DataItems1 { get; set; }
         public ObservableCollection<DataItemViewModel> DataItems2 { get; set; }
 
+        //ObservableCollection<object> selectedDataItems;
+
+        public ObservableCollection<object> SelectedDataItems { get; set; }
+        //{
+        //    get
+        //    {
+        //        return selectedDataItems;
+        //    }
+        //    set
+        //    {
+        //        if (selectedDataItems != value)
+        //        {
+
+        //            selectedDataItems = value;
+        //        }
+
+        //    }
+        //}
+
+
+
         public INavigation Navigation { get; set; }
         public Command GetDataItemsComand { get; }
         public Command GetDataItemsDetailPageComand { get; }
+        public Command SelectItemsComand { get; }
 
         private bool isRefreshing { get; set; }
         public bool IsRefreshing
@@ -32,7 +58,7 @@ namespace MauiMVVM.ViewModel
                 OnPropertyChanged(); //если текст не меняется из кода применять нет смысла
             }
         }
-        
+
         private string refreshButtonText { get; set; }
         public string RefreshButtonText
         {
@@ -58,33 +84,75 @@ namespace MauiMVVM.ViewModel
             }
         }
 
+
         public DataItemListViewModel()
         {
+
             DataItems1 = new ObservableCollection<DataItemViewModel>();
             DataItems2 = new ObservableCollection<DataItemViewModel>();
+            SelectedDataItems = new();
+            SelectedDataItems.CollectionChanged += SelectedDataItems_CollectionChanged;
             GetDataItemsComand = new Command(async () => await GetDataItemAsync());
             SearchDataItemsComand = new Command(SearchDataItems);
             FilterDataItemsComand = new Command(GetFilterResult);
             CleanFilterDataItemsComand = new Command(CleanFilter);
+            SelectItemsComand = new Command(SelectItems);
             GetDataItemsDetailPageComand = new Command(GetDataItemsDetailPage);
             RefreshButtonText = Constants.GetDatasButton;
         }
 
+        private void SelectedDataItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (DataItemViewModel it in e.NewItems)
+                        it.IsSelected = true;
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (DataItemViewModel it in e.OldItems)
+                        it.IsSelected = false;
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    foreach (DataItemViewModel it in dataItems.Where(x => x.IsSelected))
+                        it.IsSelected = false;
+                    break;
+            }
+        }
+
         async void GetDataItemsDetailPage(object obj)
         {
-            var selectItemVm = obj as DataItemViewModel;
-            if (selectItemVm != null) 
+            if (SelectedDataItems.Count > 0)
             {
-                var modalPage = new NavigationPage(new ContentPage());
-                var detalpage = new DataItemDetailPage(selectItemVm);
-                detalpage.NavigatingFrom += (o, s) =>
+                SelectItems(obj);
+            }
+            else
+            {
+                var selectItemVm = obj as DataItemViewModel;
+                if (selectItemVm != null)
                 {
-                    Navigation.PopModalAsync();
-                };
-                await Navigation.PushModalAsync(modalPage);
-                await modalPage.PushAsync(detalpage);
+                    var modalPage = new NavigationPage(new ContentPage());
+                    var detalpage = new DataItemDetailPage(selectItemVm);
+                    detalpage.NavigatingFrom += (o, s) =>
+                    {
+                        Navigation.PopModalAsync();
+                    };
+                    await Navigation.PushModalAsync(modalPage);
+                    selectItemVm.SetChips();
+                    await modalPage.PushAsync(detalpage);
 
-                selectItemVm.SetChips();
+                }
+            }
+        }
+        async void SelectItems(object obj)
+        {
+            var selectItemVm = obj as DataItemViewModel;
+            if (selectItemVm != null)
+            {
+                if (SelectedDataItems.Contains(selectItemVm))
+                    SelectedDataItems.Remove(selectItemVm);
+                else
+                    SelectedDataItems.Add(selectItemVm);
             }
         }
 
@@ -99,16 +167,16 @@ namespace MauiMVVM.ViewModel
                 if (dataItems.Count != 0)
                     dataItems.Clear();
                 var dataItemsFromDb = await DataItemService.GetDataItems();
-                for (int i = 0; i < 10; i++)
+                //for (int i = 0; i < 10; i++)
+                //{
+                foreach (var data in dataItemsFromDb)
                 {
-                    foreach (var data in dataItemsFromDb)
+                    dataItems.Add(new DataItemViewModel(data)
                     {
-                        dataItems.Add(new DataItemViewModel(data)
-                        {
-                            DataItemListViewModel = this
-                        });
-                    }
+                        DataItemListViewModel = this
+                    });
                 }
+                //}
             }
             catch (Exception ex)
             {
@@ -131,15 +199,18 @@ namespace MauiMVVM.ViewModel
 
         private void AddToDataItelsLists(DataItemViewModel data)
         {
-               if(data.Name.StartsWith("M"))
-                   DataItems1.Add(data);
-               if(!data.Name.EndsWith("M"))
-                   DataItems2.Add(data);
+            if (data.Name.StartsWith("M"))
+                DataItems1.Add(data);
+            else
+                DataItems2.Add(data);
+
+
+
         }
         private void ClearDataItelsLists()
         {
-                DataItems1.Clear();
-                DataItems2.Clear();
+            DataItems1.Clear();
+            DataItems2.Clear();
         }
 
         string searchText;
@@ -240,7 +311,7 @@ namespace MauiMVVM.ViewModel
                     result = result.Where(d => d.DateTime.Date == SearchDates.Date).ToList();
                 }
             }
-           
+
             foreach (var exoFilterItem in filtredFilds)
             {
                 if (exoFilterItem.Key == "Name")
